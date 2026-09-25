@@ -56,7 +56,31 @@ button { font-family: inherit; }
   margin: 0 auto;
   padding: 0 16px;
 }
-.container-wide { max-width: 1100px; }
+.container-wide { max-width: 1120px; }
+
+/* ---- responsive width tuning ---- */
+
+@media (min-width: 1024px) {
+  .container { max-width: 880px; }
+  .page-header-inner,
+  .top-nav-inner { max-width: 880px; }
+  .searchbar-sm { max-width: 640px; }
+}
+
+@media (min-width: 720px) {
+  .container-wide .media-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .container-wide .media-grid-videos { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+/* multi-column card layouts on wide screens (activity, notifications) */
+@media (min-width: 920px) {
+  .cards-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+    align-items: start;
+  }
+}
 
 /* ---------- home ---------- */
 
@@ -77,6 +101,7 @@ button { font-family: inherit; }
   margin: 18px 0 0;
   max-width: 480px;
 }
+.home-install { margin-top: 32px; }
 .home-stats {
   color: var(--text-faint);
   font-size: 13px;
@@ -89,6 +114,18 @@ button { font-family: inherit; }
   justify-content: center;
   gap: 10px;
   margin-top: 34px;
+}
+@media (max-width: 420px) {
+  .home-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-tab { justify-content: center; }
 }
 .home-tab {
   display: inline-flex;
@@ -112,7 +149,10 @@ button { font-family: inherit; }
   color: var(--text-faint);
   font-size: 12px;
 }
-@media (min-width: 768px) { .home-footer { bottom: 24px; } }
+@media (min-width: 768px) {
+  .home-footer { bottom: 24px; }
+  .searchbar-lg { max-width: 680px; }
+}
 
 /* ---------- logo ---------- */
 
@@ -250,7 +290,7 @@ button { font-family: inherit; }
 
 .tabs {
   display: flex;
-  gap: 4px;
+  gap: 22px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -261,8 +301,7 @@ button { font-family: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 10px 4px 12px;
-  margin-right: 16px;
+  padding: 10px 2px 12px;
   color: var(--text-dim);
   font-size: 14px;
   white-space: nowrap;
@@ -270,15 +309,15 @@ button { font-family: inherit; }
 }
 .tab:hover { color: var(--text); text-decoration: none; }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+@media (max-width: 480px) { .tabs { gap: 14px; } }
 
 /* ---------- results ---------- */
 
 .result-meta-line {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: var(--text-dim);
   font-size: 13px;
 }
@@ -295,26 +334,43 @@ button { font-family: inherit; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.result-url { color: var(--text-dim); font-size: 13px; word-break: break-all; }
+.result-url {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-.result { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.result { padding: 20px 0 24px; border-bottom: 1px solid var(--border); }
 .result:last-child { border-bottom: none; }
 .result-title {
-  font-size: 18px;
-  line-height: 1.35;
-  margin: 2px 0 4px;
-  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.4;
+  margin: 4px 0 6px;
+  font-weight: 600;
 }
 .result-title a { color: var(--accent); }
 .result-title a:visited { color: #8ab4f8; }
-.result-snippet { color: var(--text-dim); font-size: 14px; margin: 0; }
+.result-snippet {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.62;
+  margin: 0;
+}
 .result-snippet b { color: var(--text); font-weight: 600; }
 .result-foot {
   display: flex;
-  gap: 10px;
+  gap: 0;
   color: var(--text-faint);
   font-size: 12px;
-  margin-top: 6px;
+  margin-top: 8px;
+}
+.result-foot span + span::before {
+  content: "\00b7";
+  margin: 0 8px;
 }
 
 .did-you-mean {
@@ -530,6 +586,9 @@ button { font-family: inherit; }
 }
 .app-main { padding-bottom: 72px; }
 @media (min-width: 768px) { .app-main { padding-bottom: 0; } }
+@media (max-width: 360px) {
+  .bottom-nav-item { font-size: 10px; padding: 8px 0 6px; gap: 2px; }
+}
 
 /* ---------- top navigation ---------- */
 

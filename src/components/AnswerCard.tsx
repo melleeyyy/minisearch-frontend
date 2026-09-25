@@ -1,5 +1,6 @@
 import type { AnswerResponse } from "../services/answerApi";
 import { SparkIcon } from "./icons";
+import { cleanSnippetText } from "../utils/sanitize";
 
 export default function AnswerCard({ data }: { data: AnswerResponse }) {
   const confidence = data.confidence ?? 0;
@@ -10,7 +11,9 @@ export default function AnswerCard({ data }: { data: AnswerResponse }) {
         <span>Answer</span>
       </header>
 
-      <p className="answer-text">{data.answer}</p>
+      {data.answer && (
+        <p className="answer-text">{cleanSnippetText(data.answer)}</p>
+      )}
 
       <div className="answer-confidence">
         <div
@@ -59,7 +62,7 @@ export default function AnswerCard({ data }: { data: AnswerResponse }) {
                 <p className="citation-domain">{c.domain}</p>
                 <p className="citation-title">{c.title}</p>
               </a>
-              {c.snippet && <p className="citation-snippet">{c.snippet}</p>}
+              {c.snippet && <p className="citation-snippet">{cleanSnippetText(c.snippet)}</p>}
             </div>
           ))}
         </div>

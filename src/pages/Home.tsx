@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import SearchBar from "../components/SearchBar";
-import { getHealth, type Health } from "../services/api";
-import { formatNumber } from "../utils/format";
+import { useInstallPrompt } from "../hooks/useInstallPrompt";
 import { ImageIcon, SearchIcon, SparkIcon, VideoIcon } from "../components/icons";
 
 const TABS = [
@@ -15,17 +14,7 @@ const TABS = [
 
 export default function Home() {
   const [q, setQ] = useState("");
-  const [health, setHealth] = useState<Health | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    getHealth()
-      .then((h) => alive && setHealth(h))
-      .catch(() => undefined);
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const { canInstall, promptInstall } = useInstallPrompt();
 
   function submit(query: string) {
     window.location.hash = `#/search?q=${encodeURIComponent(query)}`;
@@ -39,23 +28,6 @@ export default function Home() {
 
       <SearchBar value={q} onChange={setQ} onSubmit={submit} size="lg" autoFocus />
 
-      <p className="home-stats">
-        {health
-          ? health.indexLoaded
-            ? `${formatNumber(health.pages)} pages · ${formatNumber(
-                health.images
-              )} images · ${formatNumber(health.terms)} terms · BM25 ranking${
-                health.cppAcceleration ? " · C++ accelerated" : ""
-              }`
-            : "Index is loading..."
-          : ""}
-      </p>
-
-      <p className="home-tagline">
-        A small, honest search engine — web results, images, videos and extractive
-        answers over a focused crawl of selected sources.
-      </p>
-
       <div className="home-tabs">
         {TABS.map((t) => (
           <Link key={t.to} to={t.to} className="home-tab">
@@ -64,6 +36,12 @@ export default function Home() {
           </Link>
         ))}
       </div>
+
+      {canInstall && (
+        <button className="btn btn-ghost home-install" onClick={promptInstall}>
+          Install app
+        </button>
+      )}
 
       <p className="home-footer">
         MiniSearch — ആവശ്യത്തിനുള്ള ഒരു ചെറിയ search engine

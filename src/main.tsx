@@ -8,3 +8,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <App />
   </React.StrictMode>
 );
+
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/minisearch-frontend/sw.js").catch(
+      () => undefined
+    );
+  });
+}

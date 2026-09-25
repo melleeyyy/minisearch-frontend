@@ -1,0 +1,31 @@
+{
+  "name": "MiniSearch",
+  "short_name": "MiniSearch",
+  "description": "A small, honest search engine — web results, images, videos and extractive answers over a focused crawl.",
+  "start_url": "/minisearch-frontend/",
+  "scope": "/minisearch-frontend/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    {
+      "src": "/minisearch-frontend/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/minisearch-frontend/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/minisearch-frontend/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

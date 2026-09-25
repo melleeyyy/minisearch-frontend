@@ -29,13 +29,14 @@ export default function Activity() {
   return (
     <div>
       <TopNavigation />
-      <div className="container">
+      <div className="container container-wide">
         <h1 className="page-title">Activity</h1>
         <p className="page-subtitle">
           Your recent searches (stored only on this device) and anonymous engine
           analytics.
         </p>
 
+        <div className="cards-2col">
         <div className="card">
           <h2>Recent searches</h2>
           {entries.length === 0 ? (
@@ -124,6 +125,7 @@ export default function Activity() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -36,12 +36,13 @@ export default function Notifications() {
   return (
     <div>
       <TopNavigation />
-      <div className="container">
+      <div className="container container-wide">
         <h1 className="page-title">Notifications</h1>
         <p className="page-subtitle">
           Live engine status — what MiniSearch has indexed right now.
         </p>
 
+        <div className="cards-2col">
         {error && (
           <ErrorState message={error} onRetry={() => setNonce((n) => n + 1)} />
         )}
@@ -97,6 +98,7 @@ export default function Notifications() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

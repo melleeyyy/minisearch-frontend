@@ -2,7 +2,7 @@
    Network-first for navigations, cache-first for same-origin static assets.
    API requests (cross-origin) are never intercepted. */
 
-const CACHE = "minisearch-v1";
+const CACHE = "minisearch-v3";
 const SHELL = [
   "/minisearch-frontend/",
   "/minisearch-frontend/index.html",
@@ -58,8 +58,10 @@ self.addEventListener("fetch", (event) => {
       (hit) =>
         hit ||
         fetch(request).then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(request, copy));
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(request, copy));
+          }
           return res;
         })
     )

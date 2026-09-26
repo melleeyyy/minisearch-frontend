@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-export type TabKey = "web" | "images" | "videos" | "answers";
+export type TabKey = "web" | "news" | "images" | "videos" | "research" | "answers";
 
 interface SearchTabsProps {
   q?: string;
@@ -9,8 +9,10 @@ interface SearchTabsProps {
 
 const TABS: { key: TabKey; label: string; path: string }[] = [
   { key: "web", label: "Web", path: "/search" },
+  { key: "news", label: "News", path: "/news" },
   { key: "images", label: "Images", path: "/images" },
   { key: "videos", label: "Videos", path: "/videos" },
+  { key: "research", label: "Research", path: "/research" },
   { key: "answers", label: "Answers", path: "/answers" },
 ];
 

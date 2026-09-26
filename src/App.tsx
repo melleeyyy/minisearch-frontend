@@ -6,6 +6,8 @@ import Search from "./pages/Search";
 import Images from "./pages/Images";
 import Videos from "./pages/Videos";
 import Answers from "./pages/Answers";
+import News from "./pages/News";
+import Research from "./pages/Research";
 import Notifications from "./pages/Notifications";
 import Activity from "./pages/Activity";
 
@@ -26,6 +28,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/research" element={<Research />} />
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
             <Route path="/answers" element={<Answers />} />

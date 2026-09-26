@@ -944,3 +944,31 @@ button { font-family: inherit; }
 .evidence-domain { color: var(--tag-text); }
 .evidence-date { color: var(--text-faint); }
 .citation-checked { color: var(--text-faint); font-size: 12px; margin: 2px 0 0; }
+
+/* ---- V3.16 accessibility polish ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.tab:focus-visible, .home-tab:focus-visible, .chip:focus-visible {
+  outline-offset: -2px;
+}
+.skip-link {
+  position: absolute; left: -9999px; top: 8px;
+  background: var(--accent); color: #fff; z-index: 100;
+  padding: 8px 16px; border-radius: var(--pill); font-size: 14px;
+}
+.skip-link:focus { left: 8px; }
+@media (forced-colors: active) {
+  .card, .entity-card, .answer-card, .image-card, .news-card,
+  .research-card { border: 1px solid CanvasText; }
+}

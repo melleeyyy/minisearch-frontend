@@ -928,3 +928,19 @@ button { font-family: inherit; }
   .entity-facts { grid-template-columns: repeat(2, 1fr); }
   .entity-title { font-size: 19px; }
 }
+
+/* ---- answer v2 (V3.11) ---- */
+.answer-fact-badge {
+  background: var(--tag-bg); color: var(--tag-text); font-size: 11px;
+  border-radius: var(--pill); padding: 2px 10px; text-transform: none;
+  letter-spacing: 0; margin-left: 8px;
+}
+.answer-evidence-line { color: var(--text-dim); font-size: 13.5px; margin: 0 0 12px; }
+.answer-evidence-table { margin: 0 0 6px; }
+.evidence-row {
+  display: flex; justify-content: space-between; gap: 10px;
+  padding: 7px 0; border-top: 1px solid var(--border); font-size: 13px;
+}
+.evidence-domain { color: var(--tag-text); }
+.evidence-date { color: var(--text-faint); }
+.citation-checked { color: var(--text-faint); font-size: 12px; margin: 2px 0 0; }

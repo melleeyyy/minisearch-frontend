@@ -195,7 +195,8 @@ export default function EntityCardView({ data }: EntityCardViewProps) {
     })
     .slice(0, 8);
 
-  const gallery = data.images.slice(0, 5);
+  const [heroImage, ...otherImages] = data.images;
+  const gallery = otherImages.slice(0, 4);
   const overview = cleanSnippetText(data.overview ?? "");
 
   return (
@@ -220,6 +221,22 @@ export default function EntityCardView({ data }: EntityCardViewProps) {
           Share
         </button>
       </header>
+
+      {heroImage && (
+        <a
+          className="entity-hero"
+          href={heroImage.page_url}
+          target="_blank"
+          rel="noreferrer"
+          title={`${heroImage.title} — ${heroImage.artist} (${heroImage.license})`}
+        >
+          <img
+            src={heroImage.image_url || heroImage.thumb_url}
+            alt={heroImage.title}
+            loading="lazy"
+          />
+        </a>
+      )}
 
       {gallery.length > 0 && (
         <div className="entity-gallery" role="list" aria-label="Images">

@@ -117,7 +117,7 @@ export default function Search() {
         <div className="page-header-inner">
           <div className="page-header-row">
             <Logo size="sm" linked />
-            <div onBlur={() => setFocused(false)}>
+            <div onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}>
               <SearchBar
                 value={input}
                 onChange={setInput}
@@ -133,7 +133,7 @@ export default function Search() {
               )}
             </div>
           </div>
-          <div onFocus={() => setFocused(true)}>
+          <div>
             <SearchTabs q={q} active="web" />
           </div>
         </div>

@@ -46,6 +46,7 @@ export default function SearchBar({
           autoFocus={autoFocus}
           autoComplete="off"
           spellCheck={false}
+          enterKeyHint="search"
           aria-label="Search query"
           onChange={(e) => onChange(e.target.value)}
         />

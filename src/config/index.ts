@@ -8,8 +8,8 @@ export const API_BASE: string =
 
 export const APP_NAME = "MiniSearch";
 
-// Default search placeholder (Malayalam, like the mockups).
-export const SEARCH_PLACEHOLDER = "MiniSearch-ൽ തിരയുക...";
+// Default search placeholder (per the V4 reference design).
+export const SEARCH_PLACEHOLDER = "Search";
 
 // Request timeout for API calls.
 export const API_TIMEOUT_MS = 20000;

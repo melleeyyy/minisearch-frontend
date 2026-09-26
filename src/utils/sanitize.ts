@@ -2,6 +2,47 @@
  * Snippet / answer text cleanup and safe rendering.
  */
 
+/** Named HTML entities that show up in feed text (Google News RSS etc.). */
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+  hellip: "…", mdash: "—", ndash: "–", rsquo: "’", lsquo: "‘",
+  ldquo: "“", rdquo: "”", middot: "·", copy: "©", reg: "®", trade: "™",
+};
+
+function decodeEntities(s: string): string {
+  return s.replace(/&([a-zA-Z]+|#\d{1,5}|#x[0-9a-fA-F]{1,5});/g, (m, e: string) => {
+    const named = NAMED_ENTITIES[e.toLowerCase()];
+    if (named !== undefined) return named;
+    if (e[0] === "#") {
+      const code = e[1] === "x" || e[1] === "X"
+        ? parseInt(e.slice(2), 16)
+        : parseInt(e.slice(1), 10);
+      if (Number.isFinite(code) && code > 0 && code < 0x110000) {
+        return String.fromCodePoint(code);
+      }
+    }
+    return m;
+  });
+}
+
+/**
+ * News feeds sometimes carry raw HTML markup in summary text
+ * (e.g. `<a href="...">headline</a>&nbsp; <font ...>Source</font>`).
+ * Strip it down to clean plain text so nothing leaks into the UI.
+ */
+export function stripHtml(text: string): string {
+  return decodeEntities(
+    text
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<[^>]*>/g, " ")
+      // A tag truncated by the feed (e.g. `<a href="https://…` with no `>`)
+      .replace(/<[a-zA-Z/!][^>]*$/g, " ")
+  )
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
 /**
  * Maintenance markers that leak into crawled Wikipedia text, e.g.
  * "[ edit ]", "[ citation needed ]", "[1]", "[a]", "[ note 3 ]",

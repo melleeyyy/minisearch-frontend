@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { ActivityIcon, BellIcon, HomeIcon, SearchIcon, SparkIcon } from "./icons";
+import { ActivityIcon, BellIcon, HomeIcon, SearchIcon } from "./icons";
 
 const ITEMS = [
   { to: "/", label: "Home", icon: <HomeIcon /> },
   { to: "/search", label: "Search", icon: <SearchIcon /> },
-  { to: "/answers", label: "Answers", icon: <SparkIcon /> },
-  { to: "/notifications", label: "Alerts", icon: <BellIcon /> },
+  { to: "/notifications", label: "Notifications", icon: <BellIcon /> },
   { to: "/activity", label: "Activity", icon: <ActivityIcon /> },
 ];
 

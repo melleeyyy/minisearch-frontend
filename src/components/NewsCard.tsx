@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { NewsCluster } from "../services/knowledgeApi";
-import { cleanSnippetText } from "../utils/sanitize";
+import { cleanSnippetText, stripHtml } from "../utils/sanitize";
 
 function timeAgo(iso: string): string {
   if (!iso) return "";
@@ -17,6 +17,10 @@ export default function NewsCard({ cluster }: { cluster: NewsCluster }) {
   const [open, setOpen] = useState(false);
   const [top, ...rest] = cluster.items;
   if (!top) return null;
+  // Feeds sometimes carry raw HTML (Google News RSS markup) — render clean text only.
+  const title = stripHtml(top.title);
+  const source = stripHtml(top.source);
+  const summary = top.summary ? cleanSnippetText(stripHtml(top.summary)) : "";
   return (
     <article className="news-card">
       <div className="news-card-badges">
@@ -30,11 +34,11 @@ export default function NewsCard({ cluster }: { cluster: NewsCluster }) {
         )}
       </div>
       <h3 className="news-title">
-        <a href={top.url} target="_blank" rel="noreferrer">{top.title}</a>
+        <a href={top.url} target="_blank" rel="noreferrer">{title}</a>
       </h3>
-      <p className="news-source">{top.source}</p>
-      {top.summary && (
-        <p className="news-summary">{cleanSnippetText(top.summary)}</p>
+      <p className="news-source">{source}</p>
+      {summary && (
+        <p className="news-summary">{summary}</p>
       )}
       {rest.length > 0 && (
         <div className="news-rest">
@@ -52,8 +56,8 @@ export default function NewsCard({ cluster }: { cluster: NewsCluster }) {
             <ul className="news-rest-list">
               {rest.map((it) => (
                 <li key={it.url}>
-                  <a href={it.url} target="_blank" rel="noreferrer">{it.title}</a>
-                  <span className="news-rest-source"> — {it.source}</span>
+                  <a href={it.url} target="_blank" rel="noreferrer">{stripHtml(it.title)}</a>
+                  <span className="news-rest-source"> — {stripHtml(it.source)}</span>
                 </li>
               ))}
             </ul>

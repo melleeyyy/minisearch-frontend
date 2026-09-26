@@ -5,12 +5,19 @@ import SearchBar from "../components/SearchBar";
 import SearchSuggestions from "../components/SearchSuggestions";
 import SearchTabs from "../components/SearchTabs";
 import SearchResults from "../components/SearchResults";
+import EntityCardView from "../components/EntityCard";
 import Loading from "../components/Loading";
 import ErrorState from "../components/ErrorState";
 import EmptyState from "../components/EmptyState";
 import { search, type SearchResponse } from "../services/searchApi";
+import {
+  getEntityCard,
+  getPlaceCard,
+  type EntityCard,
+} from "../services/knowledgeApi";
 import { ApiError } from "../services/api";
 import { useSuggestions } from "../hooks/useSuggestions";
+import { useEntityPreview } from "../hooks/useEntityPreview";
 import { useSearchHistory } from "../hooks/useSearchHistory";
 
 export default function Search() {
@@ -21,11 +28,13 @@ export default function Search() {
   const [input, setInput] = useState(q);
   const [focused, setFocused] = useState(false);
   const [data, setData] = useState<SearchResponse | null>(null);
+  const [entity, setEntity] = useState<EntityCard | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
 
   const suggestions = useSuggestions(input, focused && input.trim().length >= 2);
+  const entityPreview = useEntityPreview(input, focused && input.trim().length >= 3);
   const { add: addToHistory } = useSearchHistory();
 
   useEffect(() => {
@@ -61,6 +70,31 @@ export default function Search() {
     };
   }, [q, page, nonce, addToHistory]);
 
+  // V3.8: knowledge card for entity-like queries (place cards carry
+  // weather + flag). Failures degrade silently — web results still show.
+  useEffect(() => {
+    if (!q) return;
+    let alive = true;
+    setEntity(null);
+    getPlaceCard(q)
+      .then((r) => {
+        if (!alive) return;
+        if (r.place) {
+          setEntity(r.place);
+          return;
+        }
+        return getEntityCard(q).then((r2) => {
+          if (alive) setEntity(r2.entity ?? null);
+        });
+      })
+      .catch(() => {
+        if (alive) setEntity(null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [q]);
+
   const submit = useCallback(
     (query: string) => {
       setFocused(false);
@@ -90,8 +124,12 @@ export default function Search() {
                 onSubmit={submit}
                 size="sm"
               />
-              {focused && suggestions.length > 0 && (
-                <SearchSuggestions suggestions={suggestions} onPick={submit} />
+              {focused && (suggestions.length > 0 || entityPreview) && (
+                <SearchSuggestions
+                  suggestions={suggestions}
+                  onPick={submit}
+                  entity={entityPreview}
+                />
               )}
             </div>
           </div>
@@ -122,6 +160,9 @@ export default function Search() {
                 : `No pages matched “${q}”. The crawl is focused — try a different or broader query.`
             }
           />
+        )}
+        {q && !loading && !error && entity && (
+          <EntityCardView data={entity} />
         )}
         {q && !loading && !error && data && data.results.length > 0 && (
           <SearchResults data={data} onPage={goPage} />

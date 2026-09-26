@@ -1,4 +1,4 @@
-import { SearchIcon } from "./icons";
+import { SearchIcon, ArrowUpRightIcon } from "./icons";
 import type { EntityCard } from "../services/knowledgeApi";
 
 interface SearchSuggestionsProps {
@@ -57,7 +57,10 @@ export default function SearchSuggestions({
           <span className="suggestion-icon">
             <SearchIcon size={16} />
           </span>
-          <span>{s}</span>
+          <span className="suggestion-text">{s}</span>
+          <span className="suggestion-arrow" aria-hidden="true">
+            <ArrowUpRightIcon size={16} />
+          </span>
         </li>
       ))}
     </ul>

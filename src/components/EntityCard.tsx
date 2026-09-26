@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { EntityCard, MonthlyNormal } from "../services/knowledgeApi";
 import { cleanSnippetText } from "../utils/sanitize";
 import MapBlock from "./MapBlock";
+import { ChevronDownIcon, KebabIcon, PlaneIcon, ShareIcon } from "./icons";
 
 /* ---------- fact key labels + formatting ---------- */
 
@@ -127,51 +128,55 @@ function GetThere({ lat, lon }: { lat: number; lon: number }) {
   const route = `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${home ? `${home.lat},${home.lon};` : ""}${lat},${lon}`;
 
   return (
-    <div className="get-there">
-      <div className="get-there-title">Get there</div>
-      {dist !== null ? (
-        <p className="get-there-line">
-          ≈ {Math.round(dist).toLocaleString("en-IN")} km from {home?.name} ·
-          ~{flightH ? flightH.toFixed(1) : "–"} h by air
-        </p>
-      ) : (
-        <p className="get-there-line get-there-hint">
-          Set your home location for distance:
-        </p>
-      )}
-      <div className="get-there-row">
-        {!home && (
-          <form
-            className="get-there-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              // Free, keyless geocoding (Open-Meteo geocoding API)
-              const q = input.trim();
-              if (!q) return;
-              fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1`)
-                .then((r) => r.json())
-                .then((d) => {
-                  const g = d?.results?.[0];
-                  if (g) {
-                    const h = { lat: g.latitude, lon: g.longitude, name: g.name };
-                    localStorage.setItem(HOME_KEY, JSON.stringify(h));
-                    setHome(h);
-                  }
-                })
-                .catch(() => { /* ignore */ });
-            }}
-          >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Your city"
-              aria-label="Home city for distance"
-            />
-            <button type="submit">Set</button>
-          </form>
-        )}
-        <a href={route} target="_blank" rel="noreferrer">Directions (OSM) ↗</a>
+    <div className="entity-cta">
+      <div className="entity-cta-head">
+        <span className="entity-cta-title">Get there</span>
+        <a href={route} target="_blank" rel="noreferrer" className="entity-cta-chevron" aria-label="Directions">›</a>
       </div>
+      <div className="entity-cta-row">
+        <span className="entity-cta-plane"><PlaneIcon size={16} /></span>
+        {dist !== null ? (
+          <span className="entity-cta-info">
+            <span className="entity-cta-price">≈ {Math.round(dist).toLocaleString("en-IN")} km</span>
+            <span className="entity-cta-sub">~{flightH ? flightH.toFixed(1) : "–"} h by air from {home?.name}</span>
+          </span>
+        ) : (
+          <span className="entity-cta-info">
+            <span className="entity-cta-sub">Set your home city for distance</span>
+          </span>
+        )}
+      </div>
+      {!home && (
+        <form
+          className="get-there-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            // Free, keyless geocoding (Open-Meteo geocoding API)
+            const q = input.trim();
+            if (!q) return;
+            fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1`)
+              .then((r) => r.json())
+              .then((d) => {
+                const g = d?.results?.[0];
+                if (g) {
+                  const h = { lat: g.latitude, lon: g.longitude, name: g.name };
+                  localStorage.setItem(HOME_KEY, JSON.stringify(h));
+                  setHome(h);
+                }
+              })
+              .catch(() => { /* ignore */ });
+          }}
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Your city"
+            aria-label="Home city for distance"
+          />
+          <button type="submit">Set</button>
+        </form>
+      )}
+      <a className="entity-cta-link" href={route} target="_blank" rel="noreferrer">Directions (OSM) ↗</a>
     </div>
   );
 }
@@ -183,7 +188,8 @@ interface EntityCardViewProps {
 }
 
 export default function EntityCardView({ data }: EntityCardViewProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [overviewOpen, setOverviewOpen] = useState(true);
+  const [factsOpen, setFactsOpen] = useState(true);
   const [mapOpen, setMapOpen] = useState(false);
   const place = data.place;
   const facts = Object.entries(data.facts)
@@ -199,6 +205,12 @@ export default function EntityCardView({ data }: EntityCardViewProps) {
   const gallery = otherImages.slice(0, 4);
   const overview = cleanSnippetText(data.overview ?? "");
 
+  function share() {
+    const url = window.location.href;
+    if (navigator.share) navigator.share({ title: data.title, url }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(url).catch(() => {});
+  }
+
   return (
     <section className="entity-card" aria-label="Knowledge card">
       <header className="entity-head">
@@ -209,86 +221,103 @@ export default function EntityCardView({ data }: EntityCardViewProps) {
           <h2 className="entity-title">{data.title}</h2>
           <p className="entity-subtitle">{data.subtitle}</p>
         </div>
-        <button
-          type="button"
-          className="entity-share"
-          onClick={() => {
-            const url = window.location.href;
-            if (navigator.share) navigator.share({ title: data.title, url }).catch(() => {});
-            else if (navigator.clipboard) navigator.clipboard.writeText(url).catch(() => {});
-          }}
-        >
-          Share
+        <button type="button" className="entity-icon-btn" aria-label="More options" title="More options">
+          <KebabIcon size={20} />
+        </button>
+        <button type="button" className="entity-icon-btn" aria-label="Share" title="Share" onClick={share}>
+          <ShareIcon size={20} />
         </button>
       </header>
 
-      {heroImage && (
-        <a
-          className="entity-hero"
-          href={heroImage.page_url}
-          target="_blank"
-          rel="noreferrer"
-          title={`${heroImage.title} — ${heroImage.artist} (${heroImage.license})`}
-        >
-          <img
-            src={heroImage.image_url || heroImage.thumb_url}
-            alt={heroImage.title}
-            loading="lazy"
-          />
-        </a>
-      )}
-
-      {gallery.length > 0 && (
-        <div className="entity-gallery" role="list" aria-label="Images">
-          {gallery.map((im) => (
-            <a key={im.page_url} className="entity-gallery-item" role="listitem"
-               href={im.page_url} target="_blank" rel="noreferrer"
-               title={`${im.title} — ${im.artist} (${im.license})`}>
-              <img src={im.thumb_url || im.image_url} alt={im.title} loading="lazy" />
-            </a>
-          ))}
-        </div>
-      )}
-
-      {facts.length > 0 && (
-        <dl className="entity-facts">
-          {facts.map(([k, v]) => (
-            <div key={k} className="entity-fact">
-              <dt>{FACT_LABELS[k]}</dt>
-              <dd>{factValue(v)}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-
-      {overview && (
-        <div className="entity-overview">
-          <p className={`entity-overview-text${expanded ? "" : " clamped"}`}>
-            {overview}
-          </p>
-          <div className="entity-overview-actions">
-            <button type="button" className="entity-more"
-                    onClick={() => setExpanded((e) => !e)}>
-              {expanded ? "Show less" : "Show more"}
-            </button>
-            {data.url && (
-              <a href={data.url} target="_blank" rel="noreferrer">Wikipedia ↗</a>
-            )}
-          </div>
-        </div>
-      )}
+      <div className="entity-images">
+        {heroImage && (
+          <a
+            className="entity-hero"
+            href={heroImage.page_url}
+            target="_blank"
+            rel="noreferrer"
+            title={`${heroImage.title} — ${heroImage.artist} (${heroImage.license})`}
+          >
+            <img
+              src={heroImage.image_url || heroImage.thumb_url}
+              alt={heroImage.title}
+              loading="lazy"
+            />
+          </a>
+        )}
+        {gallery.map((im) => (
+          <a key={im.page_url} className="entity-gallery-item"
+             href={im.page_url} target="_blank" rel="noreferrer"
+             title={`${im.title} — ${im.artist} (${im.license})`}>
+            <img src={im.thumb_url || im.image_url} alt={im.title} loading="lazy" />
+          </a>
+        ))}
+      </div>
 
       {place && typeof place.lat === "number" && typeof place.lon === "number" && (
         <MapBlock lat={place.lat} lon={place.lon} label={data.title}
                   expanded={mapOpen} onToggle={() => setMapOpen((o) => !o)} />
       )}
 
+      {place && typeof place.lat === "number" && typeof place.lon === "number" && (
+        <GetThere lat={place.lat} lon={place.lon} />
+      )}
+
       {place?.weather?.monthly?.length ? (
         <WeatherStrip monthly={place.weather.monthly} />
       ) : null}
 
-      {place && typeof place.lat === "number" && typeof place.lon === "number" && (
-        <GetThere lat={place.lat} lon={place.lon} />
+      {overview && (
+        <section className="entity-section">
+          <button
+            type="button"
+            className="entity-section-head"
+            onClick={() => setOverviewOpen((o) => !o)}
+            aria-expanded={overviewOpen}
+          >
+            <span className="entity-section-title">Overview</span>
+            <span className={`entity-chevron${overviewOpen ? " open" : ""}`}><ChevronDownIcon size={18} /></span>
+          </button>
+          {overviewOpen && (
+            <div className="entity-section-body">
+              <p className="entity-overview-text">{overview}</p>
+              {data.url && (
+                <a className="entity-wiki-link" href={data.url} target="_blank" rel="noreferrer">
+                  Wikipedia <span className="entity-wiki-chevron">›</span>
+                </a>
+              )}
+            </div>
+          )}
+        </section>
+      )}
+
+      {facts.length > 0 && (
+        <section className="entity-section">
+          <div className="entity-section-head">
+            <button
+              type="button"
+              className="entity-section-toggle"
+              onClick={() => setFactsOpen((o) => !o)}
+              aria-expanded={factsOpen}
+            >
+              <span className="entity-section-title">Quick facts</span>
+              <span className={`entity-chevron${factsOpen ? " open" : ""}`}><ChevronDownIcon size={18} /></span>
+            </button>
+            <button type="button" className="entity-icon-btn entity-icon-btn-sm" aria-label="More options" title="More options">
+              <KebabIcon size={16} />
+            </button>
+          </div>
+          {factsOpen && (
+            <dl className="entity-facts">
+              {facts.map(([k, v]) => (
+                <div key={k} className="entity-fact">
+                  <dt>{FACT_LABELS[k]}</dt>
+                  <dd>{factValue(v)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </section>
       )}
 
       {data.related.length > 0 && (

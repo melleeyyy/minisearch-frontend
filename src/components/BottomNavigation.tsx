@@ -20,8 +20,8 @@ export default function BottomNavigation() {
             `bottom-nav-item${isActive ? " active" : ""}`
           }
         >
-          {item.icon}
-          <span>{item.label}</span>
+          <span className="bottom-nav-pill">{item.icon}</span>
+          <span className="bottom-nav-label">{item.label}</span>
         </NavLink>
       ))}
     </nav>

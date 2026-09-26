@@ -1,6 +1,7 @@
 import type { SearchResultItem } from "../services/searchApi";
 import { timeAgo } from "../utils/format";
 import { cleanSnippetHtml } from "../utils/sanitize";
+import { KebabIcon } from "./icons";
 
 /** URL path without scheme/domain — shown as a readable one-line breadcrumb. */
 function urlPath(displayUrl: string): string {
@@ -35,13 +36,21 @@ function urlPath(displayUrl: string): string {
 export default function SearchResult({ item }: { item: SearchResultItem }) {
   return (
     <article className="result">
-      <div className="result-meta-line">
-        <span className="domain-tag" title={item.domain}>
-          {item.domain}
+      <div className="result-head">
+        <span className="result-favicon" aria-hidden="true">
+          {(item.domain || "?").replace(/^www\./, "").charAt(0).toUpperCase()}
         </span>
-        <span className="result-url" title={item.displayUrl}>
-          {urlPath(item.displayUrl)}
-        </span>
+        <div className="result-head-text">
+          <span className="result-site" title={item.domain}>
+            {item.domain || item.url}
+          </span>
+          <span className="result-path" title={item.displayUrl}>
+            {urlPath(item.displayUrl)}
+          </span>
+        </div>
+        <button type="button" className="result-kebab" aria-label="More options" title="More options">
+          <KebabIcon size={18} />
+        </button>
       </div>
       <h3 className="result-title">
         <a href={item.url} target="_blank" rel="noopener noreferrer">

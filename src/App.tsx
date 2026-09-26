@@ -29,7 +29,7 @@ export default function App() {
         </a>
         <main className="app-main" id="main-content">
           <Routes>
-            <Route path="//" element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/news" element={<News />} />
             <Route path="/research" element={<Research />} />
